@@ -92,22 +92,20 @@ template<class Type>int Partition(Type a[],int p,int r){	int i = p,j = r + 1;
 	}
 }
 
+/**
+5.产生一定范围随机数的通用表示公式
+要取得[a,b)的随机整数，使用(rand() % (b-a))+ a;
+要取得[a,b]的随机整数，使用(rand() % (b-a+1))+ a;
+要取得(a,b]的随机整数，使用(rand() % (b-a))+ a + 1;
+通用公式:a + rand() % n；其中的a是起始值，n是整数的范围。
+要取得a到b之间的随机整数，另一种表示：a + (int)b * rand() / (RAND_MAX + 1)。
+要取得0～1之间的浮点数，可以使用rand() / double(RAND_MAX)。
+*/
 int Random(int a, int b)
 {
-	if (a< b)
-	{
-		int temp = a;
-		a = b;
-		b = temp;
-
-	}
-	int c = a - b;
-
-	int d=rand() *c;
-
-	int e=b + d;
-	cout <<"a="<< a <<",b="<< b<<",d=" << d <<",e="<< e << endl;
-	return e;
+	int c = (rand() % (b - a)) + a;
+	//printf("c=%d,a=%d,b=%d\n", c, a, b);
+	return c;
 
 }
 //随机化快速排序划分
@@ -128,6 +126,22 @@ void _Print(int list[],int len)
 	cout << endl;
 
 }
+//线性时间选择
+/*
+元素选择问题: 给定线性序集中n个元素和一个整数k，1≤k≤n，要求找出这n个元素中第k小的元素
+*/
+template<class Type>
+Type RandomizedSelect(Type a[], int p, int r, int k)
+{
+	if (p == r) 
+		return a[p];
+	int i = RandomizedPartition(a, p, r),
+		j = i - p + 1;
+	if (k <= j) return RandomizedSelect(a, p, i, k);
+	else return RandomizedSelect(a, i + 1, r, k - j);
+}
+
+
 
 #define arrLen(x) sizeof(x)/sizeof(x[0])
 
@@ -156,11 +170,13 @@ int main(int argc, char * argv)
 	QuickSort(list_qsort, 0, arrLen(list_qsort) - 1);
 	_Print(list_qsort, arrLen(list_qsort));
 
-	int list_qsort2[]= { 32,2,4,45,52,9 };
-	//RandomizedQuickSort(list_qsort2, 0, arrLen(list_qsort2) - 1);
+	int list_qsort2[]= { 32,2,4,45,52,9,69,123,44};
+	RandomizedQuickSort(list_qsort2, 0, arrLen(list_qsort2) - 1);
 	_Print(list_qsort2, arrLen(list_qsort2));
 
 
+	int d=RandomizedSelect(list_qsort2, 0, arrLen(list_qsort2) - 1, 5);
+	cout << d << endl;
 
 	return 0;
 }
