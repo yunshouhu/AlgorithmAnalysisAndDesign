@@ -27,6 +27,7 @@ int fibonacci(int n)
 		return 1;
 	return fibonacci(n - 1) + fibonacci(n - 2);
 }
+
 template<class Type>
 inline void Swap(Type &a,Type &b)
 {
@@ -44,8 +45,7 @@ void Perm(Type list[], int k, int m)
 		for (int i = 0; i <= m; i++)
 			cout << list[i]<<" ";
 		cout << endl;
-	}
-	else//还有多个元素待排列，递归产生排列
+	}else//还有多个元素待排列，递归产生排列
 		for (int i = k; i <= m; i++)//循环交换第一个元素与其后的所有元素实现全//排列
 		{
 			Swap(list[k], list[i]);
