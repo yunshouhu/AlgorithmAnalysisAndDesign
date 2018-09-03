@@ -13,34 +13,100 @@ void print(int arr[], int len)
 	printf("\n");
 
 }
+void swap(int* a, int* b)
+{
+	int temp = *a;
+	*a = *b;
+	*b = temp;
+}
 
-int partition(int arr[], int low, int high){
-	int key;
-	key = arr[low];
-	while (low < high){
+
+int partition(int arr[],int low,int high)
+{
+	int key = arr[low];
+	while (low < high)
+	{
 		while (low < high && arr[high] >= key)
+		{
 			high--;
+		}
 		if (low < high)
+		{
 			arr[low++] = arr[high];
+		}
 		while (low < high && arr[low] <= key)
+		{
 			low++;
+		}
 		if (low < high)
+		{
 			arr[high--] = arr[low];
+		}
 	}
 	arr[low] = key;
-
 	return low;
 }
-//快速排序
-void quick_sort(int arr[], int start, int end){
+/**
+快速排序
+排序过程
+选择一个枢纽元，可以选择首，尾，中三个数的中位数作为枢纽元；
+将枢纽元的为止与数组的尾地址进行交换；
+定义两个指针，P1指向数组首地址，P2指向数组倒数第二个位置，P1所指元素的值与枢纽元比较，如果小于枢纽元则后移一位，如果大于就停下来。P1所指元素的值与枢纽元比较，如果大于枢纽元则前移一位，如果小于就停下来；
+交换P1和P2所指向的元素；
+重复３和４直到P1大于P2；
+对数组的分割过程同样采用递归的方法。
+*/
+void quick_sort(int arr[], int start,int end)
+{
+	int bp = 1;
 	int pos;
-	if (start < end){
+	if (start < end)
+	{
 		pos = partition(arr, start, end);
-		quick_sort(arr, start, pos - 1);
-		quick_sort(arr, pos + 1, end);
+		quick_sort(arr, start, pos-1);
+		quick_sort(arr, pos+1, end);
+		int bp = 1;
 	}
 	return;
 }
+
+
+//https://blog.csdn.net/liqinzhe11/article/details/78743743
+int findmiddle(int a, int b, int c)
+{
+	if (a >= b && a <= c)
+		return a;
+	else if (b >= a && b <= c)
+		return b;
+	else
+		return c;
+}
+void quicksortHelper(int a[], int start, int end)
+{
+	if (start >= end) 
+		return;
+	int l = start;
+	int r = end;
+	int pivot = findmiddle(a[start], a[end], a[(end - start) / 2 + start]);
+	while (l <= r)
+	{
+		while (l <= r && a[r] > pivot) 
+			r--;
+		while (l <= r && a[l] < pivot) 
+			l++;
+		if (l <= r) 
+			swap(&a[l++], &a[r--]);
+	}
+	quicksortHelper(a, start, r);
+	quicksortHelper(a, l, end);
+}
+void quick_sort2(int a[],int len)
+{
+	quicksortHelper(a, 0,len - 1);
+}
+
+
+
 //冒泡排序
 void bubble_sort(int arr[], int len)
 {
@@ -70,13 +136,13 @@ void insert_sort(int arr[], int len)
 	for (int i = 0; i < len; i++)
 	{
 		int j = 0;
+		int tmp = arr[i];
 		while (arr[j] < arr[i] && j < i)
 		{
 			j++;
 		}
 		if (i != j)
-		{
-			int tmp = arr[i];
+		{		
 			for (int k = i; k>j; k--)
 			{
 				arr[k] = arr[k - 1];
@@ -125,6 +191,7 @@ void merge(int arr[], int low, int mid, int high)
 	return;
 }
 //归并排序
+//将数组Ｎ从中间分成两个数组N1和N2,然后递归两两归并。
 void merge_sort(int arr[], int left, int right)
 {
 	int bp = 9;
@@ -141,6 +208,7 @@ void merge_sort(int arr[], int left, int right)
 
 }
 //选择排序
+//1、每一次从后面选择出一个最小的值（swap_pos），替换到前面来(i)。
 void select_sort(int arr[], int len)
 {
 	for (int i = 0; i < len - 1; i++)
@@ -163,6 +231,8 @@ void select_sort(int arr[], int len)
 	}
 }
 //希尔排序
+//希尔排序是在插入排序的基础上进行发展的，通过一个希尔增量先排序一定间隔的数据。
+//最坏情况复杂度:O(N^2) 不稳定排序
 void shell_sort(int arr[], int len)
 {
 	for (int step = len / 2; step > 0; step = step / 2)
@@ -178,6 +248,37 @@ void shell_sort(int arr[], int len)
 		}
 	}
 }
+
+//堆排序
+//建堆的平均时间是：O(N)
+//建堆的最坏情况是：O(NlogN)
+//删除元素的时间是：O(logN)
+//整个排序平均时间复杂度：O(N+NlogN)=O(NlogN)
+//最坏情况复杂度：O(NlogN)
+//不稳定排序
+
+//建立一个大顶堆O(n),要求就是 把最大的元素 移动到堆顶 也就是a[0]
+void make_heap(int a[], int len) //size的当前堆的大小，也就是数组的前size个数
+{
+	for (int i = len - 1; i > 0; i--)
+	{
+		if (i % 2 && a[i] > a[(i - 1) / 2])//奇数
+			swap(&a[i], &a[(i - 1) / 2]);
+		else if (i % 2 == 0 && a[i] > a[(i - 2) / 2])//偶数
+			swap(&a[i], &a[(i - 2) / 2]);
+	}
+}
+void heap_sort(int a[],int len)
+{
+	int n =len;
+	while (n)
+	{
+		make_heap(a, n); //每次把新的最大元素移到堆顶，也就是a[0]
+		n--;
+		swap(&a[0], &a[n]); //然后把当前最大移动到后面来作为排好序的元素
+	}
+}
+
 
 int binarySearch(int arr[], int n, int key)
 {
@@ -208,7 +309,8 @@ int binarySearch(int arr[], int n, int key)
 int main(void){
 	{
 
-		int arr[] = { 32, 12, 7, 78, 23, 45, 3, 6, 9 };
+		//int arr[] = { 32, 12, 7, 78, 23, 45, 3, 6, 9 };
+		int arr[] = { 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
 		int len = arrLen(arr);
 		printf("==========quick_sort============\n");
 		print(arr, len);
@@ -224,7 +326,8 @@ int main(void){
 		print(arr, len);
 	}
 	{
-		int arr[] = { 32, 12, 7, 78, 23, 45, 3, 6, 9 };
+		//int arr[] = { 32, 12, 7, 78, 23, 45, 3, 6, 9 };
+		int arr[] = { 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
 		int len = arrLen(arr);
 		printf("==========insert_sort============\n");
 		print(arr, len);
@@ -256,7 +359,22 @@ int main(void){
 		shell_sort(arr, len);
 		print(arr, len);
 	}
-
+	{
+		int arr[] = { 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
+		int len = arrLen(arr);
+		printf("==========heap_sort============\n");
+		print(arr, len);
+		heap_sort(arr, len);
+		print(arr, len);
+	}
+	{
+		int arr[] = { 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
+		int len = arrLen(arr);
+		printf("==========quick_sort2============\n");
+		print(arr, len);
+		quick_sort2(arr, len);
+		print(arr, len);
+	}
 
 	return 0;
 }
