@@ -303,6 +303,103 @@ int binarySearch(int arr[], int n, int key)
 	return -1;
 }
 
+int my_partition(int arr[], int low, int high)
+{
+	int key = arr[low];
+	while (low < high)
+	{
+		while (low<high && arr[high] >= key)
+		{
+			high--;
+		}
+		if(low<high)
+			arr[low++] = arr[high];
+
+		while (low < high && arr[high] <= key)
+		{
+			low++;
+		}
+		if(low<high)
+			arr[high--] = arr[low];
+	}
+	arr[low] = key;
+	return low;
+}
+//快速排序的每一轮处理其实就是将这一轮的基准数归位，直到所有的数都归位为止，排序就结束了。
+void my_qsort(int arr[], int low, int high)
+{
+	if (low < high)
+	{
+		int pos = my_partition(arr, low, high);
+		my_qsort(arr, 0, pos-1);
+		my_qsort(arr, pos+1, high);
+	}
+}
+//此时以基准数6为分界点，6左边的数都小于等于6，6右边的数都大于等于6。
+//回顾一下刚才的过程，其实哨兵j的使命就是要找小于基准数的数，而哨兵i的使命就是要找大于基准数的数，直到i和j碰头为止。
+void my_sort(int arr[], int left, int right)
+{
+	if (left >=right)
+	{
+		return;
+	}
+	int low = left;
+	int high = right;
+	int key = arr[low];
+	while (low < high)
+	{
+		while (low < high && arr[high] >= key)
+		{
+			high--;
+		}
+		arr[low] = arr[high];
+		while (low < high && arr[low] <= key)
+		{
+			low++;
+		}
+		arr[high] = arr[low];
+
+	}
+	arr[low] = key;
+	my_sort(arr, left, low - 1);
+	my_sort(arr, low + 1, right);
+}
+//http://developer.51cto.com/art/201403/430986.htm
+void quicksort(int arr[],int left, int right)
+{
+	int i, j, t, base;
+	if (left > right)
+		return;
+
+	base = arr[left]; //temp中存的就是基准数 
+	i = left;
+	j = right;
+	while (i != j)
+	{
+		//顺序很重要，要先从右边开始找 
+		while (arr[j] >= base && i < j)
+			j--;
+		//再找右边的 
+		while (arr[i] <= base && i < j)
+			i++;
+		//交换两个数在数组中的位置 
+		if (i < j)
+		{
+			t = arr[i];
+			arr[i] = arr[j];
+			arr[j] = t;
+		}
+	}
+	//最终将基准数归位 
+	arr[left] = arr[i];
+	arr[i] = base;
+
+	quicksort(arr,left, i-1);//继续处理左边的，这里是一个递归的过程 
+	quicksort(arr,i + 1, right);//继续处理右边的 ，这里是一个递归的过程 
+}
+
+
+
 //c语言实现常用排序算法
 
 //http://c.biancheng.net/cpp/html/2741.html
@@ -375,6 +472,31 @@ int main(void){
 		quick_sort2(arr, len);
 		print(arr, len);
 	}
+	{
+		int arr[] = { 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
+		int len = arrLen(arr);
+		printf("==========my_qsort============\n");
+		print(arr, len);
+		my_qsort(arr, 0,len-1);
+		print(arr, len);
+	}
+	{
+		int arr[] = { 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
+		int len = arrLen(arr);
+		printf("==========my_sort============\n");
+		print(arr, len);
+		my_sort(arr, 0, len - 1);
+		print(arr, len);
+	}
+	{
+		int arr[] = { 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
+		int len = arrLen(arr);
+		printf("==========quicksort============\n");
+		print(arr, len);
+		quicksort(arr, 0, len - 1);
+		print(arr, len);
+	}
+	
 
 	return 0;
 }
